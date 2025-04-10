@@ -27,20 +27,24 @@ qj_db/
 
 1. Create a new PostgreSQL database
 2. Run the initial schema setup:
-   ```
-   psql -d your_database -f schema/init.sql
-   psql -d your_database -f schema/tables.sql
-   ```
+
+  ```
+  psql -d your_database -f schema/init.sql
+  psql -d your_database -f schema/tables.sql
+  ```
+
 3. Apply migrations as needed:
-   ```
-   psql -d your_database -f migrations/full_text_search.sql
-   ```
+
+  ```
+  psql -d your_database -f migrations/full_text_search.sql
+  ```
 
 ## Key Features
 
 ### Full-Text Search
 
 The database implements PostgreSQL full-text search for posts with weighted ranking:
+
 - Titles (A weight) - highest priority
 - Starting/ending positions, practitioner, movement type (B weight) - medium priority
 - Position types (C weight) - lower priority
@@ -59,6 +63,35 @@ The database implements PostgreSQL full-text search for posts with weighted rank
 ## Maintenance
 
 When making schema changes:
+
 1. Create a migration script in the `migrations/` directory
 2. Update the schema reference documentation
 3. Test the migration on a staging database before production# qj_db
+
+## Database Access via Bastion Host
+
+To access the database through a bastion host, follow these steps:
+
+### Prerequisites
+
+- SSH access to the bastion host (jump server).
+- PostgreSQL client installed on your local machine.
+- Database credentials (username, password, host, port).
+
+### Steps to Access the Database
+
+1. **Create SSH Tunnel to the Database:** Set up an SSH tunnel to the PostgreSQL database server:
+
+```bash
+ssh -i yourkey.pem -L 5432:database-server-ip:5432 ubuntu@bastion-host-ip
+```
+
+This command ssh into the bastion and forwards port 5432 from the bastion host to the database server, making it available on your local machine.
+
+1. **Connect to the PostgreSQL Database:** On your local machine, connect to the PostgreSQL database via the forwarded port:
+
+```bash
+psql -h localhost -p 5432 -U your_database_username -d your_database_name
+```
+
+Replace your_database_username with your PostgreSQL username and your_database_name with the name of your database.
